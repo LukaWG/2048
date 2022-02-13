@@ -255,8 +255,11 @@ def run(MAP=MAP):
                     
                     for i in range(len(MAP)):
                         for j in range(len(MAP[i])):
+                            tilemap.append([])
                             if MAP[i][j] != 0:
-                                Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j])
+                                tilemap[i].append(Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j]))
+                            else:
+                                tilemap[i].append(None)
                                 
                     new_block(MAP)
                 elif event.key == pygame.K_RIGHT:

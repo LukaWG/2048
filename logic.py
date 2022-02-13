@@ -19,8 +19,6 @@ def merge(dir, map):
         for i in range(len(map)):
             for j in range(len(map[i])-1):
                 if map[i][j][0] == map[i][j+1][0] and map[i][j][0] != 0 and map[i][j+1][0] != 0:
-                    print(map[i][j])
-                    print(map[i][j][0])
                     map[i][j][0] = map[i][j][0]*2
                     map[i][j+1] = (0, (None, None))
         map = left(map, __merged=True)
