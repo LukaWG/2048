@@ -212,6 +212,9 @@ def new_block(map):
 def edit_map(x:int, y:int, num:int):
     MAP[y][x] = num
 
+def find_changes(self, movemap):
+    pass
+
 pygame.init()
 screen = pygame.display.set_mode(SCREENSIZE)
 
