@@ -288,7 +288,7 @@ def run(MAP=MAP):
                     for i in tiles:
                         i.kill()
 
-                    tilemap = create_tiles(map)
+                    tilemap = create_tiles(MAP)
                                 
                     new_block(MAP)
                 elif event.key == pygame.K_DOWN:
@@ -299,7 +299,7 @@ def run(MAP=MAP):
                     for i in tiles:
                         i.kill()
 
-                    tilemap = create_tiles(map)
+                    tilemap = create_tiles(MAP)
                                 
                     new_block(MAP)
                 elif event.key == pygame.K_SPACE:
