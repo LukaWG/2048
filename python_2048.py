@@ -213,10 +213,23 @@ def edit_map(x:int, y:int, num:int):
     MAP[y][x] = num
 
 def find_changes(movemap):
-    movelist = [[], [], [], []]
+    movelist = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
     for i in range(len(movemap)):
         for j in range(len(movemap[i])):
-            pass
+            if movemap[i][j][0] != 0:
+                if movemap[i][j][1] != (j, i):
+                    hor = j - movemap[i][j][1][0]
+                    if hor > 0:
+                        dir = f"{abs(hor)} L"
+                    elif hor < 0:
+                        dir = f"{hor} R"
+                    ver = i - movemap[i][j][1][1]
+                    if ver > 0:
+                        dir = f"{abs(ver)} U"
+                    elif ver < 0:
+                        dir = f"{ver} D"
+                    movelist[movemap[i][j][1][1]][movemap[i][j][1][0]] = dir # number followed by letter e.g 2 L (means move 2 left)
+    print(f"MOVELIST:\n{movelist[0]}\n{movelist[1]}\n{movelist[2]}\n{movelist[3]}\n")
 
 
 def create_tiles(map):
