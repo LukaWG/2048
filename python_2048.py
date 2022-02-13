@@ -1,3 +1,5 @@
+# Sort out moving
+
 import time
 import pygame
 import random
