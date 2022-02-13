@@ -212,8 +212,24 @@ def new_block(map):
 def edit_map(x:int, y:int, num:int):
     MAP[y][x] = num
 
-def find_changes(self, movemap):
+def find_changes(movemap):
     pass
+
+def create_tiles(map):
+    for i in tiles:
+        i.kill()
+
+    tilemap = []
+    
+    for i in range(len(map)):
+        for j in range(len(map[i])):
+            tilemap.append([])
+            if map[i][j] != 0:
+                tilemap[i].append(Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), map[i][j]))
+            else:
+                tilemap[i].append(None)
+
+    return tilemap
 
 pygame.init()
 screen = pygame.display.set_mode(SCREENSIZE)
@@ -250,16 +266,7 @@ def run(MAP=MAP):
                     #     i.left()
                     MAP, MOVE_MAP = logic.left(MAP)
 
-                    for i in tiles:
-                        i.kill()
-                    
-                    for i in range(len(MAP)):
-                        for j in range(len(MAP[i])):
-                            tilemap.append([])
-                            if MAP[i][j] != 0:
-                                tilemap[i].append(Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j]))
-                            else:
-                                tilemap[i].append(None)
+                    tilemap = create_tiles(MAP)
                                 
                     new_block(MAP)
                 elif event.key == pygame.K_RIGHT:
@@ -269,11 +276,8 @@ def run(MAP=MAP):
 
                     for i in tiles:
                         i.kill()
-                    
-                    for i in range(len(MAP)):
-                        for j in range(len(MAP[i])):
-                            if MAP[i][j] != 0:
-                                Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j])
+
+                    tilemap = create_tiles(MAP)
                                 
                     new_block(MAP)
                 elif event.key == pygame.K_UP:
@@ -283,11 +287,8 @@ def run(MAP=MAP):
 
                     for i in tiles:
                         i.kill()
-                    
-                    for i in range(len(MAP)):
-                        for j in range(len(MAP[i])):
-                            if MAP[i][j] != 0:
-                                Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j])
+
+                    tilemap = create_tiles(map)
                                 
                     new_block(MAP)
                 elif event.key == pygame.K_DOWN:
@@ -297,11 +298,8 @@ def run(MAP=MAP):
 
                     for i in tiles:
                         i.kill()
-                    
-                    for i in range(len(MAP)):
-                        for j in range(len(MAP[i])):
-                            if MAP[i][j] != 0:
-                                Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j])
+
+                    tilemap = create_tiles(map)
                                 
                     new_block(MAP)
                 elif event.key == pygame.K_SPACE:
