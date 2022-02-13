@@ -53,7 +53,6 @@ def left(map, __merged=False):
     Move all the items in the map as far left as they should go. 
     Then calls the merge function and will then run again
     """
-    print(f"INITIAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
         for i in range(len(map)):
             for j in range(len(map)):
@@ -69,7 +68,6 @@ def left(map, __merged=False):
                 if map[i][j][0] == 0 and map[i][j+1][0] != 0:
                     map[i][j], map[i][j+1] = map[i][j+1], map[i][j]
                     change = True
-    print(f"FINAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
         map = merge(__LEFT, map)
         # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
