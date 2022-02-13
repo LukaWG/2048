@@ -213,7 +213,11 @@ def edit_map(x:int, y:int, num:int):
     MAP[y][x] = num
 
 def find_changes(movemap):
-    pass
+    movelist = [[], [], [], []]
+    for i in range(len(movemap)):
+        for j in range(len(movemap[i])):
+            pass
+
 
 def create_tiles(map):
     for i in tiles:
