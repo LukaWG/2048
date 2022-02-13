@@ -231,6 +231,8 @@ clock = pygame.time.Clock()
 
 def run(MAP=MAP):
 
+    tilemap = []
+
     done = False
 
     while not done and len(tiles.sprites()) != 16:
@@ -247,32 +249,60 @@ def run(MAP=MAP):
                     # for i in tiles:
                     #     i.left()
                     MAP, MOVE_MAP = logic.left(MAP)
+
+                    for i in tiles:
+                        i.kill()
+                    
+                    for i in range(len(MAP)):
+                        for j in range(len(MAP[i])):
+                            if MAP[i][j] != 0:
+                                Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j])
+                                
                     new_block(MAP)
                 elif event.key == pygame.K_RIGHT:
                     # for i in tiles:
                     #     i.right()
                     MAP = logic.right(MAP)
+
+                    for i in tiles:
+                        i.kill()
+                    
+                    for i in range(len(MAP)):
+                        for j in range(len(MAP[i])):
+                            if MAP[i][j] != 0:
+                                Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j])
+                                
                     new_block(MAP)
                 elif event.key == pygame.K_UP:
                     # for i in tiles:
                     #     i.up()
                     MAP = logic.up(MAP)
+
+                    for i in tiles:
+                        i.kill()
+                    
+                    for i in range(len(MAP)):
+                        for j in range(len(MAP[i])):
+                            if MAP[i][j] != 0:
+                                Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j])
+                                
                     new_block(MAP)
                 elif event.key == pygame.K_DOWN:
                     # for i in tiles:
                     #     i.down()
                     MAP = logic.down(MAP)
+
+                    for i in tiles:
+                        i.kill()
+                    
+                    for i in range(len(MAP)):
+                        for j in range(len(MAP[i])):
+                            if MAP[i][j] != 0:
+                                Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j])
+                                
                     new_block(MAP)
                 elif event.key == pygame.K_SPACE:
                     print(f"{MAP[0]}\n{MAP[1]}\n{MAP[2]}\n{MAP[3]}\n")
-
-        for i in tiles:
-            i.kill()
-        
-        for i in range(len(MAP)):
-            for j in range(len(MAP[i])):
-                if MAP[i][j] != 0:
-                    Tile(((j*100)+(20*(j+1)), (i*100)+(20*(i+1))), MAP[i][j])
 
         tiles.update()
 
