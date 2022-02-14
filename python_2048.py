@@ -58,10 +58,7 @@ class Tile(pygame.sprite.Sprite):
         self.rect.y = pos[1]
 
         self.dir = None
-        self.lastdir = None
-        self.speed = None
-        self.dx = 0
-        self.dy = 0
+        self.counter = 0
 
         if num == None:
             if len(tiles.sprites()) > 5:
@@ -111,37 +108,20 @@ class Tile(pygame.sprite.Sprite):
         self.image.blit(to_display, pos)
 
     def update(self):
-        if self.dir == LEFT and self.dx != 0:
-            if self.speed == "accelerate":
-                self.dx -= 1
-            else:
-                self.dx += 1
-        elif self.dir == RIGHT and self.dx != 0:
-            if self.speed == "accelerate":
-                self.dx += 1
-            else:
-                self.dx -= 1
-        elif self.dir == UP and self.dy != 0:
-            if self.speed == "accelerate":
-                self.dy -= 1
-            else:
-                self.dy += 1
-        elif self.dir == DOWN and self.dy != 0:
-            if self.speed == "accelerate":
-                self.dy += 1
-            else:
-                self.dy -= 1
-
-
-        if abs(self.dx) == 11 or abs(self.dy) == 11:
-            self.speed = "decelerate"
-        elif self.dx == 0 and self.dy == 0 and self.speed:
-            self.speed = None
+        if self.counter < 120:
+            if self.dir == LEFT or self.dir == RIGHT:
+                self.rect.x += self.speed
+            elif self.dir == UP or self.dir == DOWN:
+                self.rect.y += self.speed
+            self.counter += 1
+        else:
             self.dir = None
-            self.update_map()
 
-        self.rect.x += self.dx
-        self.rect.y += self.dy
+
+    def move(self, dir):
+        self.counter = 0
+        self.speed, self.dir = dir.split()
+        self.speed = int(self.speed)
 
     def left(self):
         if not self.dir and self.check(LEFT):
@@ -214,7 +194,7 @@ def new_block(map):
 def edit_map(x:int, y:int, num:int):
     MAP[y][x] = num
 
-def find_changes(movemap):
+def find_changes(movemap, tilemap):
     movelist = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
     for i in range(len(movemap)):
         for j in range(len(movemap[i])):
@@ -222,16 +202,22 @@ def find_changes(movemap):
                 if movemap[i][j][1] != (j, i):
                     hor = j - movemap[i][j][1][0]
                     if hor < 0:
-                        dir = f"{abs(hor)} L"
+                        dir = f"{hor} {LEFT}"
                     elif hor > 0:
-                        dir = f"{hor} R"
+                        dir = f"{hor} {RIGHT}"
                     ver = i - movemap[i][j][1][1]
                     if ver < 0:
-                        dir = f"{abs(ver)} U"
+                        dir = f"{ver} {UP}"
                     elif ver > 0:
-                        dir = f"{ver} D"
+                        dir = f"{ver} {DOWN}"
                     movelist[movemap[i][j][1][1]][movemap[i][j][1][0]] = dir # number followed by letter e.g 2 L (means move 2 left)
     print(f"MOVELIST:\n{movelist[0]}\n{movelist[1]}\n{movelist[2]}\n{movelist[3]}\n")
+    try:print(f"\n\nTILEMAP:\n{tilemap[0]}\n{tilemap[1]}\n{tilemap[2]}\n{tilemap[3]}\n")
+    except:pass
+    for i in range(len(tilemap)):
+        for j in range(len(tilemap[i])):
+            if movelist[i][j] != 0:
+                tilemap[i][j].move(movelist[i][j])
 
 
 def create_tiles(map):
@@ -285,11 +271,11 @@ def run(MAP=MAP):
                     #     i.left()
                     MAP, MOVE_MAP = logic.left(MAP)
 
-                    find_changes(MOVE_MAP)
-
-                    tilemap = create_tiles(MAP)
+                    find_changes(MOVE_MAP, tilemap)
                                 
                     new_block(MAP)
+
+                    # tilemap = create_tiles(MAP)
                 elif event.key == pygame.K_RIGHT:
                     # for i in tiles:
                     #     i.right()
@@ -297,10 +283,10 @@ def run(MAP=MAP):
 
                     for i in tiles:
                         i.kill()
-
-                    tilemap = create_tiles(MAP)
                                 
                     new_block(MAP)
+
+                    tilemap = create_tiles(MAP)
                 elif event.key == pygame.K_UP:
                     # for i in tiles:
                     #     i.up()
@@ -308,10 +294,10 @@ def run(MAP=MAP):
 
                     for i in tiles:
                         i.kill()
-
-                    tilemap = create_tiles(MAP)
                                 
                     new_block(MAP)
+
+                    tilemap = create_tiles(MAP)
                 elif event.key == pygame.K_DOWN:
                     # for i in tiles:
                     #     i.down()
@@ -319,12 +305,14 @@ def run(MAP=MAP):
 
                     for i in tiles:
                         i.kill()
-
-                    tilemap = create_tiles(MAP)
                                 
                     new_block(MAP)
+
+                    tilemap = create_tiles(MAP)
                 elif event.key == pygame.K_SPACE:
                     print(f"{MAP[0]}\n{MAP[1]}\n{MAP[2]}\n{MAP[3]}\n")
+                elif event.key == pygame.K_RETURN:
+                    tilemap = create_tiles(MAP)
 
         tiles.update()
 
