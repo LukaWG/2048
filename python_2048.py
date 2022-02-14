@@ -1,4 +1,6 @@
-# moving left doesn't always work
+# Moving Left:
+#       Works for the numbers 2 & 4, but doesn't seem to after that. 
+#       After 120 frames the board updates, so movement merges happen, just after a delay
 
 import time
 import pygame
@@ -118,6 +120,7 @@ class Tile(pygame.sprite.Sprite):
         else:
             self.dir = None
             if self.state == "KEEP":
+                print(f"{int(time.time())} - CHANGING NUMBER")
                 self.text(self.num)
             elif self.state == "DELETE":
                 self.kill()
@@ -256,6 +259,9 @@ def create_tiles(map):
 pygame.init()
 screen = pygame.display.set_mode(SCREENSIZE)
 
+logo = pygame.image.load("2048_logo.png")
+pygame.display.set_icon(logo)
+
 board = pygame.sprite.Group()
 tiles = pygame.sprite.Group()
 
@@ -268,6 +274,8 @@ new_block(MAP)
 clock = pygame.time.Clock()
 
 def run(MAP=MAP):
+
+    counter = 0
 
     tilemap = []
 
@@ -290,37 +298,34 @@ def run(MAP=MAP):
 
                     find_changes(MOVE_MAP, tilemap, MAP)
                                 
-                    new_block(MAP)
-
-                    # tilemap = create_tiles(MAP)
+                    counter = 0
                 elif event.key == pygame.K_RIGHT:
                     # for i in tiles:
                     #     i.right()
                     MAP = logic.right(MAP)
                                 
-                    new_block(MAP)
-
-                    tilemap = create_tiles(MAP)
+                    counter = 119
                 elif event.key == pygame.K_UP:
                     # for i in tiles:
                     #     i.up()
                     MAP = logic.up(MAP)
                                 
-                    new_block(MAP)
-
-                    tilemap = create_tiles(MAP)
+                    counter = 119
                 elif event.key == pygame.K_DOWN:
                     # for i in tiles:
                     #     i.down()
                     MAP = logic.down(MAP)
                                 
-                    new_block(MAP)
-
-                    tilemap = create_tiles(MAP)
+                    counter = 119
                 elif event.key == pygame.K_SPACE:
                     print(f"{MAP[0]}\n{MAP[1]}\n{MAP[2]}\n{MAP[3]}\n")
                 elif event.key == pygame.K_RETURN:
                     tilemap = create_tiles(MAP)
+
+        counter += 1
+        if counter == 120:
+            new_block(MAP)
+            tilemap = create_tiles(MAP)
 
         tiles.update()
 
