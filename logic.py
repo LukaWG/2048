@@ -22,6 +22,7 @@ def merge(dir, map):
                     map[i][j][0] = map[i][j][0]*2
                     map[i][j+1][0] = map[i][j][0]*2
                     map[i][j+1][2] = "DELETE"
+                    print(map[i][j+1])
         map = left(map, __merged=True)
     elif dir == __RIGHT:
         for i in range(len(map)):

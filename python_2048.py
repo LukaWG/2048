@@ -1,4 +1,4 @@
-# moving left seems to work, but test it
+# moving left doesn't always work
 
 import time
 import pygame
@@ -131,6 +131,11 @@ class Tile(pygame.sprite.Sprite):
         self.speed = int(self.speed)
         self.num = num
         self.state = state
+        if self.state == "DELETE":
+            if self.dir == RIGHT or self.dir == DOWN:
+                self.speed += 1
+            elif self.dir == LEFT or self.dir == UP:
+                self.speed -= 1
 
     def left(self):
         if not self.dir and self.check(LEFT):
