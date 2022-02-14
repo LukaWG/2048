@@ -18,9 +18,10 @@ def merge(dir, map):
     if dir == __LEFT:
         for i in range(len(map)):
             for j in range(len(map[i])-1):
-                if map[i][j][0] == map[i][j+1][0] and map[i][j][0] != 0 and map[i][j+1][0] != 0:
+                if map[i][j][0] == map[i][j+1][0] and map[i][j][0] != 0 and map[i][j+1][0] != 0 and map[i][j][2] == "KEEP" and map[i][j+1][2] == "KEEP":
                     map[i][j][0] = map[i][j][0]*2
-                    map[i][j+1] = (0, (None, None))
+                    map[i][j+1][0] = map[i][j][0]*2
+                    map[i][j+1][2] = "DELETE"
         map = left(map, __merged=True)
     elif dir == __RIGHT:
         for i in range(len(map)):
@@ -55,15 +56,15 @@ def left(map, __merged=False):
         for i in range(len(map)):
             for j in range(len(map)):
                 if map[i][j] != 0:
-                    map[i][j] = [map[i][j], (j, i)]
+                    map[i][j] = [map[i][j], (j, i), "KEEP"]
                 else:
-                    map[i][j] = [map[i][j], (None, None)]
+                    map[i][j] = [map[i][j], (None, None), "KEEP"]
     change = True
     while change:
         change = False
         for i in range(len(map)):
             for j in range(len(map[i])-1):
-                if map[i][j][0] == 0 and map[i][j+1][0] != 0:
+                if map[i][j][0] == 0 and map[i][j+1][0] != 0 and map[i][j][2] == "KEEP" and map[i][j+1][2] == "KEEP":
                     map[i][j], map[i][j+1] = map[i][j+1], map[i][j]
                     change = True
     if not __merged:
@@ -73,7 +74,10 @@ def left(map, __merged=False):
         move_map = deepcopy(map)
         for i in range(len(move_map)):
             for j in range(len(move_map[i])):
-                map[i][j] = move_map[i][j][0]
+                if move_map[i][j][2] == "KEEP":
+                    map[i][j] = move_map[i][j][0]
+                elif move_map[i][j][2] == "DELETE":
+                    map[i][j] = 0
         return map, move_map
     else:
         return map

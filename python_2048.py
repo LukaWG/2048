@@ -1,4 +1,4 @@
-# Sort out moving
+# moving left seems to work, but test it
 
 import time
 import pygame
@@ -59,6 +59,7 @@ class Tile(pygame.sprite.Sprite):
 
         self.dir = None
         self.counter = 0
+        self.state = "KEEP"
 
         if num == None:
             if len(tiles.sprites()) > 5:
@@ -116,14 +117,20 @@ class Tile(pygame.sprite.Sprite):
             self.counter += 1
         else:
             self.dir = None
-            self.text(self.num)
+            if self.state == "KEEP":
+                self.text(self.num)
+            elif self.state == "DELETE":
+                self.kill()
+            else:
+                print("UNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\n")
 
 
-    def move(self, dir, num):
+    def move(self, dir, num, state):
         self.counter = 0
         self.speed, self.dir = dir.split()
         self.speed = int(self.speed)
         self.num = num
+        self.state = state
 
     def left(self):
         if not self.dir and self.check(LEFT):
@@ -213,7 +220,8 @@ def find_changes(movemap, tilemap, map):
                     elif ver > 0:
                         dir = f"{ver} {DOWN}"
                     movelist[movemap[i][j][1][1]][movemap[i][j][1][0]] = dir # number followed by letter e.g 2 L (means move 2 left)
-                    tilemap[movemap[i][j][1][1]][movemap[i][j][1][0]].move(movelist[movemap[i][j][1][1]][movemap[i][j][1][0]], map[i][j])
+                    print(movemap[i][j])
+                    tilemap[movemap[i][j][1][1]][movemap[i][j][1][0]].move(movelist[movemap[i][j][1][1]][movemap[i][j][1][0]], map[i][j], movemap[i][j][2])
     print(f"MOVELIST:\n{movelist[0]}\n{movelist[1]}\n{movelist[2]}\n{movelist[3]}\n")
     try:print(f"\n\nTILEMAP:\n{tilemap[0]}\n{tilemap[1]}\n{tilemap[2]}\n{tilemap[3]}\n")
     except:pass
@@ -284,9 +292,6 @@ def run(MAP=MAP):
                     # for i in tiles:
                     #     i.right()
                     MAP = logic.right(MAP)
-
-                    for i in tiles:
-                        i.kill()
                                 
                     new_block(MAP)
 
@@ -295,9 +300,6 @@ def run(MAP=MAP):
                     # for i in tiles:
                     #     i.up()
                     MAP = logic.up(MAP)
-
-                    for i in tiles:
-                        i.kill()
                                 
                     new_block(MAP)
 
@@ -306,9 +308,6 @@ def run(MAP=MAP):
                     # for i in tiles:
                     #     i.down()
                     MAP = logic.down(MAP)
-
-                    for i in tiles:
-                        i.kill()
                                 
                     new_block(MAP)
 
