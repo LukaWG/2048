@@ -116,12 +116,14 @@ class Tile(pygame.sprite.Sprite):
             self.counter += 1
         else:
             self.dir = None
+            self.text(self.num)
 
 
-    def move(self, dir):
+    def move(self, dir, num):
         self.counter = 0
         self.speed, self.dir = dir.split()
         self.speed = int(self.speed)
+        self.num = num
 
     def left(self):
         if not self.dir and self.check(LEFT):
@@ -194,7 +196,7 @@ def new_block(map):
 def edit_map(x:int, y:int, num:int):
     MAP[y][x] = num
 
-def find_changes(movemap, tilemap):
+def find_changes(movemap, tilemap, map):
     movelist = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
     for i in range(len(movemap)):
         for j in range(len(movemap[i])):
@@ -211,13 +213,15 @@ def find_changes(movemap, tilemap):
                     elif ver > 0:
                         dir = f"{ver} {DOWN}"
                     movelist[movemap[i][j][1][1]][movemap[i][j][1][0]] = dir # number followed by letter e.g 2 L (means move 2 left)
+                    tilemap[movemap[i][j][1][1]][movemap[i][j][1][0]].move(movelist[movemap[i][j][1][1]][movemap[i][j][1][0]], map[i][j])
     print(f"MOVELIST:\n{movelist[0]}\n{movelist[1]}\n{movelist[2]}\n{movelist[3]}\n")
     try:print(f"\n\nTILEMAP:\n{tilemap[0]}\n{tilemap[1]}\n{tilemap[2]}\n{tilemap[3]}\n")
     except:pass
-    for i in range(len(tilemap)):
-        for j in range(len(tilemap[i])):
-            if movelist[i][j] != 0:
-                tilemap[i][j].move(movelist[i][j])
+    # for i in range(len(tilemap)):
+    #     for j in range(len(tilemap[i])):
+    #         if movelist[i][j] != 0:
+    #             tilemap[i][j].move(movelist[i][j], map[i][j])
+                
 
 
 def create_tiles(map):
@@ -271,7 +275,7 @@ def run(MAP=MAP):
                     #     i.left()
                     MAP, MOVE_MAP = logic.left(MAP)
 
-                    find_changes(MOVE_MAP, tilemap)
+                    find_changes(MOVE_MAP, tilemap, MAP)
                                 
                     new_block(MAP)
 
