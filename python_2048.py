@@ -1,6 +1,9 @@
-# Moving Left:
-#       Works for the numbers 2 & 4, but doesn't seem to after that. 
-#       After 120 frames the board updates, so movement and merges happen, just after a delay
+# # Moving Left:
+# #     Works for the numbers 2, 4 and possibly 8, but doesn't seem to after that. 
+# #     After 120 frames the board updates, so movement and merges happen, just after a delay
+
+# Changed how logic tracks changes, so incorporate that into here
+# It now has the starting position in a separate list that moves with the other list
 
 import time
 import pygame
@@ -119,7 +122,7 @@ class Tile(pygame.sprite.Sprite):
         else:
             self.dir = None
             if self.state == "KEEP":
-                print(f"{int(time.time())} - CHANGING NUMBER")
+                # print(f"{int(time.time())} - CHANGING NUMBER")
                 self.text(self.num)
             elif self.state == "DELETE":
                 self.kill()
@@ -178,12 +181,6 @@ def find_changes(movemap, tilemap, map):
     print(f"MOVELIST:\n{movelist[0]}\n{movelist[1]}\n{movelist[2]}\n{movelist[3]}\n")
     try:print(f"\n\nTILEMAP:\n{tilemap[0]}\n{tilemap[1]}\n{tilemap[2]}\n{tilemap[3]}\n")
     except:pass
-    # for i in range(len(tilemap)):
-    #     for j in range(len(tilemap[i])):
-    #         if movelist[i][j] != 0:
-    #             tilemap[i][j].move(movelist[i][j], map[i][j])
-                
-
 
 def create_tiles(map):
     for i in tiles:
