@@ -3,6 +3,8 @@
 #       After 120 frames the board updates, so movement merges happen, just after a delay
 
 import time
+from venv import create
+from numpy import isin
 import pygame
 import random
 import logic
@@ -229,6 +231,8 @@ def find_changes(movemap, tilemap, map):
                         dir = f"{ver} {DOWN}"
                     movelist[movemap[i][j][1][1]][movemap[i][j][1][0]] = dir # number followed by letter e.g 2 L (means move 2 left)
                     print(movemap[i][j])
+                    print(tilemap)
+                    print(f"\n\nTILEMAP:\n{tilemap[0]}\n{tilemap[1]}\n{tilemap[2]}\n{tilemap[3]}\n")
                     tilemap[movemap[i][j][1][1]][movemap[i][j][1][0]].move(movelist[movemap[i][j][1][1]][movemap[i][j][1][0]], map[i][j], movemap[i][j][2])
     print(f"MOVELIST:\n{movelist[0]}\n{movelist[1]}\n{movelist[2]}\n{movelist[3]}\n")
     try:print(f"\n\nTILEMAP:\n{tilemap[0]}\n{tilemap[1]}\n{tilemap[2]}\n{tilemap[3]}\n")
@@ -241,6 +245,9 @@ def find_changes(movemap, tilemap, map):
 
 
 def create_tiles(map):
+    print(type(map))
+
+    assert isinstance(map, tuple)
     for i in tiles:
         i.kill()
 
@@ -255,7 +262,6 @@ def create_tiles(map):
                 tilemap[i].append(None)
 
     return tilemap
-
 
 pygame.init()
 logo = pygame.image.load("2048_logo.png")
@@ -280,6 +286,8 @@ def run(MAP=MAP):
     tilemap = []
 
     done = False
+
+    create_tiles(MAP)
 
     while not done and len(tiles.sprites()) != 16:
 
