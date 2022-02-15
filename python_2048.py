@@ -1,10 +1,8 @@
 # Moving Left:
 #       Works for the numbers 2 & 4, but doesn't seem to after that. 
-#       After 120 frames the board updates, so movement merges happen, just after a delay
+#       After 120 frames the board updates, so movement and merges happen, just after a delay
 
 import time
-from venv import create
-from numpy import isin
 import pygame
 import random
 import logic
@@ -74,7 +72,7 @@ class Tile(pygame.sprite.Sprite):
             self.text(num)
 
         self.pos = self.get_pos()
-        edit_map(self.pos[0], self.pos[1], self.num)
+        edit_map((((self.rect.x%100)//20)-1, ((self.rect.y%100)//20)-1), self.num)
 
     def text(self, num):
         self.num = num
@@ -142,60 +140,6 @@ class Tile(pygame.sprite.Sprite):
             elif self.dir == LEFT or self.dir == UP:
                 self.speed -= 1
 
-    def left(self):
-        if not self.dir and self.check(LEFT):
-            # self.pos = self.get_pos()
-            # edit_map(self.pos[0], self.pos[1], 0)
-            self.lastdir = LEFT
-            self.dir = LEFT
-            self.dx = -1
-            self.speed = "accelerate"
-
-    def right(self):
-        if not self.dir and self.check(RIGHT):
-            # self.pos = self.get_pos()
-            # edit_map(self.pos[0], self.pos[1], 0)
-            self.lastdir = RIGHT
-            self.dir = RIGHT
-            self.dx = 1
-            self.speed = "accelerate"
-
-    def up(self):
-        if not self.dir and self.check(UP):
-            # self.pos = self.get_pos()
-            # edit_map(self.pos[0], self.pos[1], 0)
-            self.lastdir = UP
-            self.dir = UP
-            self.dy = -1
-            self.speed = "accelerate"
-
-    def down(self):
-        if not self.dir and self.check(DOWN):
-            # self.pos = self.get_pos()
-            # edit_map(self.pos[0], self.pos[1], 0)
-            self.lastdir = DOWN
-            self.dir = DOWN
-            self.dy = 1
-            self.speed = "accelerate"
-
-    def check(self, dir):
-        if dir == LEFT:
-            return True
-        elif dir == RIGHT:
-            return True
-        elif dir == UP:
-            return True
-        elif dir == DOWN:
-            return True
-
-    def get_pos(self):
-        self.tile = (((self.rect.x%100)//20)-1, ((self.rect.y%100)//20)-1)
-        return self.tile
-
-    def update_map(self):
-        self.pos = self.get_pos()
-        edit_map(self.pos[0], self.pos[1], self.num)
-
 def find_empty_square(map):
     options = []
     for i in range(len(map)):
@@ -231,8 +175,6 @@ def find_changes(movemap, tilemap, map):
                         dir = f"{ver} {DOWN}"
                     movelist[movemap[i][j][1][1]][movemap[i][j][1][0]] = dir # number followed by letter e.g 2 L (means move 2 left)
                     print(movemap[i][j])
-                    print(tilemap)
-                    print(f"\n\nTILEMAP:\n{tilemap[0]}\n{tilemap[1]}\n{tilemap[2]}\n{tilemap[3]}\n")
                     tilemap[movemap[i][j][1][1]][movemap[i][j][1][0]].move(movelist[movemap[i][j][1][1]][movemap[i][j][1][0]], map[i][j], movemap[i][j][2])
     print(f"MOVELIST:\n{movelist[0]}\n{movelist[1]}\n{movelist[2]}\n{movelist[3]}\n")
     try:print(f"\n\nTILEMAP:\n{tilemap[0]}\n{tilemap[1]}\n{tilemap[2]}\n{tilemap[3]}\n")
@@ -245,9 +187,6 @@ def find_changes(movemap, tilemap, map):
 
 
 def create_tiles(map):
-    print(type(map))
-
-    assert isinstance(map, tuple)
     for i in tiles:
         i.kill()
 
@@ -281,13 +220,11 @@ clock = pygame.time.Clock()
 
 def run(MAP=MAP):
 
-    counter = 0
+    counter = 119
 
     tilemap = []
 
     done = False
-
-    create_tiles(MAP)
 
     while not done and len(tiles.sprites()) != 16:
 
@@ -300,28 +237,20 @@ def run(MAP=MAP):
                 if event.key == pygame.K_ESCAPE:
                     done = True
                 elif event.key == pygame.K_LEFT:
-                    # for i in tiles:
-                    #     i.left()
                     MAP, MOVE_MAP = logic.left(MAP)
 
                     find_changes(MOVE_MAP, tilemap, MAP)
                                 
                     counter = 0
                 elif event.key == pygame.K_RIGHT:
-                    # for i in tiles:
-                    #     i.right()
                     MAP = logic.right(MAP)
                                 
                     counter = 119
                 elif event.key == pygame.K_UP:
-                    # for i in tiles:
-                    #     i.up()
                     MAP = logic.up(MAP)
                                 
                     counter = 119
                 elif event.key == pygame.K_DOWN:
-                    # for i in tiles:
-                    #     i.down()
                     MAP = logic.down(MAP)
                                 
                     counter = 119
