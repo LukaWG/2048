@@ -71,8 +71,7 @@ class Tile(pygame.sprite.Sprite):
         else:
             self.text(num)
 
-        self.pos = self.get_pos()
-        edit_map((((self.rect.x%100)//20)-1, ((self.rect.y%100)//20)-1), self.num)
+        edit_map(((self.rect.x%100)//20)-1, ((self.rect.y%100)//20)-1, self.num)
 
     def text(self, num):
         self.num = num
@@ -205,6 +204,7 @@ def create_tiles(map):
 pygame.init()
 logo = pygame.image.load("2048_logo.png")
 pygame.display.set_icon(logo)
+pygame.display.set_caption("2048")
 screen = pygame.display.set_mode(SCREENSIZE)
 
 board = pygame.sprite.Group()
