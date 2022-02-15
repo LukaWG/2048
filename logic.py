@@ -11,7 +11,7 @@ __RIGHT = "RIGHT"
 __UP = "UP"
 __DOWN = "DOWN"
 
-def merge(dir, map, id_map=None):
+def __merge(dir, map, __id_map=None):
     '''
     Merges tiles in a given direction
     '''
@@ -28,9 +28,10 @@ def merge(dir, map, id_map=None):
                 if map[i][j] == map[i][j+1] and map[i][j] != 0 and map[i][j+1] != 0:
                     map[i][j] = map[i][j]*2
                     map[i][j+1] = 0
-                    id_map[i][j] = (id_map[i][j], id_map[i][j+1])
-                    id_map[i][j+1] = (None, None)
-        map = left(map, __merged=True)
+                    __id_map[i][j] = (__id_map[i][j], __id_map[i][j+1])
+                    __id_map[i][j+1] = (None, None)
+        map, __id_map = left(map, __merged=True, __id_map=__id_map)
+        return map, __id_map
     elif dir == __RIGHT:
         for i in range(len(map)):
             for j in range(len(map[i])-1, 0, -1):
@@ -90,16 +91,21 @@ def merge(dir, map, id_map=None):
 #     else:
 #         return map
 
-def left(map, __merged=False):
+def left(map, __merged=False, __id_map=None):
     """
     Move all the items in the map as far left as they should go. 
     Then calls the merge function and will then run again
     """
-    id_map = []
-    for i in range(4):
-        id_map.append([])
-        for j in range(4):
-            id_map[i].append((j, i))
+    if not __merged:
+        __id_map = []
+        for i in range(4):
+            __id_map.append([])
+            for j in range(4):
+                if map[i][j] != 0:
+                    print(map[i][j])
+                    __id_map[i].append((j, i))
+                else:
+                    __id_map[i].append((None, None))
     change = True
     while change:
         change = False
@@ -107,15 +113,15 @@ def left(map, __merged=False):
             for j in range(len(map[i])-1):
                 if map[i][j] == 0 and map[i][j+1] != 0:
                     map[i][j], map[i][j+1] = map[i][j+1], map[i][j]
-                    id_map[i][j], id_map[i][j+1] = id_map[i][j+1], id_map[i][j]
+                    __id_map[i][j], __id_map[i][j+1] = __id_map[i][j+1], __id_map[i][j]
                     change = True
     if not __merged:
-        map = merge(__LEFT, map, id_map=id_map)
+        map, __id_map = __merge(__LEFT, map, __id_map=__id_map)
         # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if __merged:
-        return map, id_map
+        return map, __id_map
     else:
-        return map
+        return map, __id_map
     
 def right(map, __merged=False):
     """
@@ -133,7 +139,7 @@ def right(map, __merged=False):
                     change = True
     # print(f"FINAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
-        map = merge(__RIGHT, map)
+        map = __merge(__RIGHT, map)
         # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map
 
@@ -153,7 +159,7 @@ def up(map, __merged=False):
                     change = True
     # print(f"FINAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
-        map = merge(__UP, map)
+        map = __merge(__UP, map)
         # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map
 
@@ -173,6 +179,6 @@ def down(map, __merged=False):
                     change = True
     # print(f"FINAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
-        map = merge(__DOWN, map)
+        map = __merge(__DOWN, map)
         # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map

@@ -1,14 +1,11 @@
-# # Moving Left:
-# #     Works for the numbers 2, 4 and possibly 8, but doesn't seem to after that. 
-# #     After 120 frames the board updates, so movement and merges happen, just after a delay
-
-# Changed how logic tracks changes, so incorporate that into here
-# It now has the starting position in a separate list that moves with the other list
+# Moving left works. Now implement with other directions
 
 import time
 import pygame
 import random
+
 import logic
+import error
 
 FPS = 50
 
@@ -130,7 +127,7 @@ class Tile(pygame.sprite.Sprite):
                 print("UNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\n")
 
 
-    def move(self, dir, num, state):
+    def move(self, dir, num, state="KEEP"):
         self.counter = 0
         self.speed, self.dir = dir.split()
         self.speed = int(self.speed)
@@ -160,27 +157,54 @@ def edit_map(x:int, y:int, num:int):
     MAP[y][x] = num
 
 def find_changes(movemap, tilemap, map):
+
     movelist = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
     for i in range(len(movemap)):
         for j in range(len(movemap[i])):
-            if movemap[i][j][0] != 0:
-                if movemap[i][j][1] != (j, i):
-                    hor = j - movemap[i][j][1][0]
-                    if hor < 0:
-                        dir = f"{hor} {LEFT}"
-                    elif hor > 0:
-                        dir = f"{hor} {RIGHT}"
-                    ver = i - movemap[i][j][1][1]
-                    if ver < 0:
-                        dir = f"{ver} {UP}"
-                    elif ver > 0:
-                        dir = f"{ver} {DOWN}"
-                    movelist[movemap[i][j][1][1]][movemap[i][j][1][0]] = dir # number followed by letter e.g 2 L (means move 2 left)
-                    print(movemap[i][j])
-                    tilemap[movemap[i][j][1][1]][movemap[i][j][1][0]].move(movelist[movemap[i][j][1][1]][movemap[i][j][1][0]], map[i][j], movemap[i][j][2])
-    print(f"MOVELIST:\n{movelist[0]}\n{movelist[1]}\n{movelist[2]}\n{movelist[3]}\n")
-    try:print(f"\n\nTILEMAP:\n{tilemap[0]}\n{tilemap[1]}\n{tilemap[2]}\n{tilemap[3]}\n")
-    except:pass
+            if movemap[i][j] != (None, None):
+                if len(str(movemap[i][j][0])) == 1:
+                    if movemap[i][j] != (j, i):
+                        dir = None
+
+                        hor = j - movemap[i][j][0]
+                        if hor < 0:
+                            dir = f"{hor} {LEFT}"
+                        elif hor > 0:
+                            dir = f"{hor} {RIGHT}"
+                        
+                        ver = i - movemap[i][j][1]
+                        if ver < 0:
+                            dir = f"{ver} {UP}"
+                        elif ver > 0:
+                            dir = f"{ver} {DOWN}"
+
+                        if not dir:
+                            raise error.Dir_Not_Definied("dir is not definied")
+
+                        movelist[movemap[i][j][1]][movemap[i][j][0]] = dir # number followed by direction e.g 2 LEFT (means move 2 left)
+                        tilemap[movemap[i][j][1]][movemap[i][j][0]].move(movelist[movemap[i][j][1]][movemap[i][j][0]], map[i][j])
+                elif len(movemap[i][j][0]) == 2:
+                    for k in range(2):
+                        if movemap[i][j][k] != (j, i):
+                            dir = None
+
+                            hor = j - movemap[i][j][k][0]
+                            if hor < 0:
+                                dir = f"{hor} {LEFT}"
+                            elif hor > 0:
+                                dir = f"{hor} {RIGHT}"
+                            
+                            ver = i - movemap[i][j][k][1]
+                            if ver < 0:
+                                dir = f"{ver} {UP}"
+                            elif ver > 0:
+                                dir = f"{ver} {DOWN}"
+
+                            if not dir:
+                                raise error.Dir_Not_Definied("dir is not definied")
+
+                            movelist[movemap[i][j][k][1]][movemap[i][j][k][0]] = dir # number followed by direction e.g 2 LEFT (means move 2 left)
+                            tilemap[movemap[i][j][k][1]][movemap[i][j][k][0]].move(movelist[movemap[i][j][k][1]][movemap[i][j][k][0]], map[i][j])
 
 def create_tiles(map):
     for i in tiles:
