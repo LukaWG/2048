@@ -1,7 +1,11 @@
+# Moving left works. Now implement with other directions
+
 import time
 import pygame
 import random
+
 import logic
+import error
 
 FPS = 50
 
@@ -56,10 +60,8 @@ class Tile(pygame.sprite.Sprite):
         self.rect.y = pos[1]
 
         self.dir = None
-        self.lastdir = None
-        self.speed = None
-        self.dx = 0
-        self.dy = 0
+        self.counter = 0
+        self.state = "KEEP"
 
         if num == None:
             if len(tiles.sprites()) > 5:
@@ -69,8 +71,7 @@ class Tile(pygame.sprite.Sprite):
         else:
             self.text(num)
 
-        self.pos = self.get_pos()
-        edit_map(self.pos[0], self.pos[1], self.num)
+        edit_map(((self.rect.x%100)//20)-1, ((self.rect.y%100)//20)-1, self.num)
 
     def text(self, num):
         self.num = num
@@ -109,91 +110,34 @@ class Tile(pygame.sprite.Sprite):
         self.image.blit(to_display, pos)
 
     def update(self):
-        if self.dir == LEFT and self.dx != 0:
-            if self.speed == "accelerate":
-                self.dx -= 1
-            else:
-                self.dx += 1
-        elif self.dir == RIGHT and self.dx != 0:
-            if self.speed == "accelerate":
-                self.dx += 1
-            else:
-                self.dx -= 1
-        elif self.dir == UP and self.dy != 0:
-            if self.speed == "accelerate":
-                self.dy -= 1
-            else:
-                self.dy += 1
-        elif self.dir == DOWN and self.dy != 0:
-            if self.speed == "accelerate":
-                self.dy += 1
-            else:
-                self.dy -= 1
-
-
-        if abs(self.dx) == 11 or abs(self.dy) == 11:
-            self.speed = "decelerate"
-        elif self.dx == 0 and self.dy == 0 and self.speed:
-            self.speed = None
+        if self.counter < 120:
+            if self.dir == LEFT or self.dir == RIGHT:
+                self.rect.x += self.speed
+            elif self.dir == UP or self.dir == DOWN:
+                self.rect.y += self.speed
+            self.counter += 1
+        else:
             self.dir = None
-            self.update_map()
+            if self.state == "KEEP":
+                # print(f"{int(time.time())} - CHANGING NUMBER")
+                self.text(self.num)
+            elif self.state == "DELETE":
+                self.kill()
+            else:
+                print("UNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\n")
 
-        self.rect.x += self.dx
-        self.rect.y += self.dy
 
-    def left(self):
-        if not self.dir and self.check(LEFT):
-            # self.pos = self.get_pos()
-            # edit_map(self.pos[0], self.pos[1], 0)
-            self.lastdir = LEFT
-            self.dir = LEFT
-            self.dx = -1
-            self.speed = "accelerate"
-
-    def right(self):
-        if not self.dir and self.check(RIGHT):
-            # self.pos = self.get_pos()
-            # edit_map(self.pos[0], self.pos[1], 0)
-            self.lastdir = RIGHT
-            self.dir = RIGHT
-            self.dx = 1
-            self.speed = "accelerate"
-
-    def up(self):
-        if not self.dir and self.check(UP):
-            # self.pos = self.get_pos()
-            # edit_map(self.pos[0], self.pos[1], 0)
-            self.lastdir = UP
-            self.dir = UP
-            self.dy = -1
-            self.speed = "accelerate"
-
-    def down(self):
-        if not self.dir and self.check(DOWN):
-            # self.pos = self.get_pos()
-            # edit_map(self.pos[0], self.pos[1], 0)
-            self.lastdir = DOWN
-            self.dir = DOWN
-            self.dy = 1
-            self.speed = "accelerate"
-
-    def check(self, dir):
-        if dir == LEFT:
-            return True
-        elif dir == RIGHT:
-            return True
-        elif dir == UP:
-            return True
-        elif dir == DOWN:
-            return True
-
-    def get_pos(self):
-        self.tile = (((self.rect.x%100)//20)-1, ((self.rect.y%100)//20)-1)
-        return self.tile
-
-    def update_map(self):
-        self.pos = self.get_pos()
-        edit_map(self.pos[0], self.pos[1], self.num)
+    def move(self, dir, num, state="KEEP"):
+        self.counter = 0
+        self.speed, self.dir = dir.split()
+        self.speed = int(self.speed)
+        self.num = num
+        self.state = state
+        if self.state == "DELETE":
+            if self.dir == RIGHT or self.dir == DOWN:
+                self.speed += 1
+            elif self.dir == LEFT or self.dir == UP:
+                self.speed -= 1
 
 def find_empty_square(map):
     options = []
@@ -212,8 +156,55 @@ def new_block(map):
 def edit_map(x:int, y:int, num:int):
     MAP[y][x] = num
 
-def find_changes(movemap):
-    pass
+def find_changes(movemap, tilemap, map):
+
+    movelist = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+    for i in range(len(movemap)):
+        for j in range(len(movemap[i])):
+            if movemap[i][j] != (None, None):
+                if len(str(movemap[i][j][0])) == 1:
+                    if movemap[i][j] != (j, i):
+                        dir = None
+
+                        hor = j - movemap[i][j][0]
+                        if hor < 0:
+                            dir = f"{hor} {LEFT}"
+                        elif hor > 0:
+                            dir = f"{hor} {RIGHT}"
+                        
+                        ver = i - movemap[i][j][1]
+                        if ver < 0:
+                            dir = f"{ver} {UP}"
+                        elif ver > 0:
+                            dir = f"{ver} {DOWN}"
+
+                        if not dir:
+                            raise error.Dir_Not_Definied("dir is not definied")
+
+                        movelist[movemap[i][j][1]][movemap[i][j][0]] = dir # number followed by direction e.g 2 LEFT (means move 2 left)
+                        tilemap[movemap[i][j][1]][movemap[i][j][0]].move(movelist[movemap[i][j][1]][movemap[i][j][0]], map[i][j])
+                elif len(movemap[i][j][0]) == 2:
+                    for k in range(2):
+                        if movemap[i][j][k] != (j, i):
+                            dir = None
+
+                            hor = j - movemap[i][j][k][0]
+                            if hor < 0:
+                                dir = f"{hor} {LEFT}"
+                            elif hor > 0:
+                                dir = f"{hor} {RIGHT}"
+                            
+                            ver = i - movemap[i][j][k][1]
+                            if ver < 0:
+                                dir = f"{ver} {UP}"
+                            elif ver > 0:
+                                dir = f"{ver} {DOWN}"
+
+                            if not dir:
+                                raise error.Dir_Not_Definied("dir is not definied")
+
+                            movelist[movemap[i][j][k][1]][movemap[i][j][k][0]] = dir # number followed by direction e.g 2 LEFT (means move 2 left)
+                            tilemap[movemap[i][j][k][1]][movemap[i][j][k][0]].move(movelist[movemap[i][j][k][1]][movemap[i][j][k][0]], map[i][j])
 
 def create_tiles(map):
     for i in tiles:
@@ -232,6 +223,9 @@ def create_tiles(map):
     return tilemap
 
 pygame.init()
+logo = pygame.image.load("2048_logo.png")
+pygame.display.set_icon(logo)
+pygame.display.set_caption("2048")
 screen = pygame.display.set_mode(SCREENSIZE)
 
 board = pygame.sprite.Group()
@@ -246,6 +240,8 @@ new_block(MAP)
 clock = pygame.time.Clock()
 
 def run(MAP=MAP):
+
+    counter = 119
 
     tilemap = []
 
@@ -262,48 +258,32 @@ def run(MAP=MAP):
                 if event.key == pygame.K_ESCAPE:
                     done = True
                 elif event.key == pygame.K_LEFT:
-                    # for i in tiles:
-                    #     i.left()
                     MAP, MOVE_MAP = logic.left(MAP)
 
-                    tilemap = create_tiles(MAP)
+                    find_changes(MOVE_MAP, tilemap, MAP)
                                 
-                    new_block(MAP)
+                    counter = 0
                 elif event.key == pygame.K_RIGHT:
-                    # for i in tiles:
-                    #     i.right()
                     MAP = logic.right(MAP)
-
-                    for i in tiles:
-                        i.kill()
-
-                    tilemap = create_tiles(MAP)
                                 
-                    new_block(MAP)
+                    counter = 119
                 elif event.key == pygame.K_UP:
-                    # for i in tiles:
-                    #     i.up()
                     MAP = logic.up(MAP)
-
-                    for i in tiles:
-                        i.kill()
-
-                    tilemap = create_tiles(map)
                                 
-                    new_block(MAP)
+                    counter = 119
                 elif event.key == pygame.K_DOWN:
-                    # for i in tiles:
-                    #     i.down()
                     MAP = logic.down(MAP)
-
-                    for i in tiles:
-                        i.kill()
-
-                    tilemap = create_tiles(map)
                                 
-                    new_block(MAP)
+                    counter = 119
                 elif event.key == pygame.K_SPACE:
                     print(f"{MAP[0]}\n{MAP[1]}\n{MAP[2]}\n{MAP[3]}\n")
+                elif event.key == pygame.K_RETURN:
+                    tilemap = create_tiles(MAP)
+
+        counter += 1
+        if counter == 120:
+            new_block(MAP)
+            tilemap = create_tiles(MAP)
 
         tiles.update()
 
