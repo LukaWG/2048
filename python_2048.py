@@ -256,11 +256,11 @@ def create_tiles(map):
 
     return tilemap
 
-pygame.init()
-screen = pygame.display.set_mode(SCREENSIZE)
 
+pygame.init()
 logo = pygame.image.load("2048_logo.png")
 pygame.display.set_icon(logo)
+screen = pygame.display.set_mode(SCREENSIZE)
 
 board = pygame.sprite.Group()
 tiles = pygame.sprite.Group()
