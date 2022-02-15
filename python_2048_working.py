@@ -213,6 +213,8 @@ def edit_map(x:int, y:int, num:int):
     MAP[y][x] = num
 
 pygame.init()
+logo = pygame.image.load("2048_logo.png")
+pygame.display.set_icon(logo)
 screen = pygame.display.set_mode(SCREENSIZE)
 
 board = pygame.sprite.Group()
@@ -230,7 +232,7 @@ def run(MAP=MAP):
 
     done = False
 
-    while not done and len(tiles.sprites()) != 16:
+    while not done: # and len(tiles.sprites()) != 16:
 
         clock.tick(FPS)
 
