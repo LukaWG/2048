@@ -314,13 +314,19 @@ def run(MAP=MAP):
 
     if len(tiles.sprites()) == 16:
         finished = False
+        End_Text("LOSE")
         while not finished:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     done = True
                 elif event.type == pygame.KEYDOWN:
                     finished = True
-                    pygame.quit()
+            text.draw(screen)
+            print("HERE")
+            
+            pygame.display.flip()
+            
+    pygame.quit()
 
 if __name__ == "__main__":
     run()
