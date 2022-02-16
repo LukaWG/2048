@@ -7,7 +7,7 @@ import random
 import logic
 import error
 
-SPEED_FACTOR = 120 # 15 recommended
+SPEED_FACTOR = 15 # 15 recommended
 
 assert (120/SPEED_FACTOR).is_integer(), ("SPEED_FACTOR is not a factor of 120")
 
