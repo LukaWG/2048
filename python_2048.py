@@ -284,7 +284,7 @@ def run(MAP=MAP):
                     elif event.key == pygame.K_DOWN:
                         MAP, MOVE_MAP = logic.down(MAP)
 
-						find_changes(MOVE_MAP, tilemap, MAP)
+                        find_changes(MOVE_MAP, tilemap, MAP)
 
                         counter = 0
                 elif event.key == pygame.K_SPACE:
