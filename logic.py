@@ -169,3 +169,11 @@ def down(map, __merged=False, __id_map=None):
         map, __id_map = __merge(__DOWN, map, __id_map=__id_map)
         # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map, __id_map
+
+def check_merge(map):
+    merge = False
+    for i in range(len(map)-1):
+        for j in range(len(map[i])-1):
+            if map[i][j] in [map[i][j+1], map[i+1][j]]:
+                merge = True
+    return merge

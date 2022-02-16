@@ -1,13 +1,10 @@
-# Check to see if it is possible to move, otherwise do not create new tile
-# Create end screen
-
 import pygame
 import random
 
 import logic
 import error
 
-SPEED_FACTOR = 15 # 15 recommended
+SPEED_FACTOR = 120 # 15 recommended
 
 assert (120/SPEED_FACTOR).is_integer(), ("SPEED_FACTOR is not a factor of 120")
 
@@ -285,7 +282,7 @@ def run(MAP=MAP):
     done = False
     ttfe = False
 
-    while not done and len(tiles.sprites()) != 16:
+    while not done:
 
         clock.tick(FPS)
 
@@ -329,6 +326,9 @@ def run(MAP=MAP):
         if counter == 120//SPEED_FACTOR:
             if ttfe:
                 done = True
+            if len(tiles.sprites()) == 16:
+                if not logic.check_merge(MAP):
+                    done = True
             new_block(MAP)
             tilemap = create_tiles(MAP)
 
