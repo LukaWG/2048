@@ -1,4 +1,5 @@
-# Moving left works. Now implement with other directions
+# Check to see if it is possible to move, otherwise do not create new tile
+# Create end screen
 
 import time
 import pygame
@@ -7,7 +8,7 @@ import random
 import logic
 import error
 
-SPEED_FACTOR = 5
+SPEED_FACTOR = 10
 
 assert (120/SPEED_FACTOR).is_integer(), ("SPEED_FACTOR is not a factor of 120")
 
@@ -142,6 +143,11 @@ class Tile(pygame.sprite.Sprite):
                 self.speed += 1
             elif self.dir == LEFT or self.dir == UP:
                 self.speed -= 1
+
+class End_Text(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        # Create text to say: Game over \n Press any key to continue
 
 def find_empty_square(map):
     options = []
@@ -306,8 +312,15 @@ def run(MAP=MAP):
 
         pygame.display.flip()
 
-    time.sleep(1)
-    pygame.quit()
+    if len(tiles.sprites()) == 16:
+        finished = False
+        while not finished:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    done = True
+                elif event.type == pygame.KEYDOWN:
+                    finished = True
+                    pygame.quit()
 
 if __name__ == "__main__":
     run()
