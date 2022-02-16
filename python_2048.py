@@ -24,7 +24,7 @@ MAP = (
     [0, 0, 0, 0]
     )
 
-#region
+#region - classes
 class Board(pygame.sprite.Sprite):
     def __init__(self, size, x, y):
         super().__init__()
@@ -46,7 +46,6 @@ class Vertical(Board):
 class Horizontal(Board):
     def __init__(self, x, y):
         super().__init__([500, 20], x, y)
-#endregion
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, num=None):
@@ -166,7 +165,9 @@ class End_Text(pygame.sprite.Sprite):
         pos = (0, 0)
         self.image.blit(self.to_display1, pos)
         self.image.blit(self.to_display2, (pos[0], pos[1]+self.sizey//2))
+#endregion - classes
 
+#region - functions
 def find_empty_square(map):
     options = []
     for i in range(len(map)):
@@ -253,6 +254,7 @@ def create_tiles(map):
                 tilemap[i].append(None)
 
     return tilemap
+#endregion - functions
 
 pygame.init()
 logo = pygame.image.load("2048_logo.png")
