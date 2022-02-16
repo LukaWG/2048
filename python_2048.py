@@ -148,22 +148,27 @@ class End_Text(pygame.sprite.Sprite):
     def __init__(self, state):
         super().__init__(text)
         if state == "LOSE":
-            self.text = "Game over\nPress any key to exit"
+            self.text = ["Game over", "Press any key to exit"]
         elif state == "WIN":
-            self.text = "You won!\nPress any key to continue"
+            self.text = ["You won!", "Press any key to continue"]
         self.myfont = pygame.font.Font(pygame.font.get_default_font(), 40)
-        self.to_display = self.myfont.render(self.text, True, (255, 255, 255))
-        self.to_display_rect = self.to_display.get_rect()
-        self.size = self.to_display_rect.size
+        self.to_display1 = self.myfont.render(self.text[0], False, (1, 1, 1))
+        self.to_display1_rect = self.to_display1.get_rect()
+        self.to_display2 = self.myfont.render(self.text[1], False, (1, 1, 1))
+        self.to_display2_rect = self.to_display2.get_rect()
 
-        self.image = pygame.Surface(self.size).convert_alpha()
+        self.sizex = self.to_display2_rect.size[0]
+        self.sizey = self.to_display1_rect.size[1] + self.to_display2_rect.size[1]
+
+        self.image = pygame.Surface((self.sizex, self.sizey)).convert_alpha()
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.centerx = SCREENSIZE[0]//2
         self.rect.centery = SCREENSIZE[0]//2
 
         pos = (0, 0)
-        self.image.blit(self.to_display, pos)
+        self.image.blit(self.to_display1, pos)
+        self.image.blit(self.to_display2, (pos[0], pos[1]+self.sizey//2))
         # Create text to say: Game over \n Press any key to continue
 
 def find_empty_square(map):
