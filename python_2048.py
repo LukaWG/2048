@@ -342,7 +342,8 @@ def run(MAP=MAP):
             text.draw(screen)
 
             pygame.display.flip()
-
+            
+            pygame.display.flip()
     pygame.quit()
 
 if __name__ == "__main__":
