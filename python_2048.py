@@ -1,14 +1,17 @@
+# Sometimes randomly closes
+
+from time import sleep
 import pygame
 import random
 
 import logic
 import error
 
-SPEED_FACTOR = 15 # 15 recommended
+SPEED_FACTOR = 120 # 15 recommended
 
 assert (120/SPEED_FACTOR).is_integer(), ("SPEED_FACTOR is not a factor of 120")
 
-FPS = 50
+FPS = 50 # 50
 
 SCREENSIZE = [500, 500]
 
@@ -359,15 +362,17 @@ def run(MAP=MAP):
     if len(tiles.sprites()) == 16:
         finished = False
         End_Text("LOSE")
+        text.draw(screen)
+        pygame.display.flip()
+
+        sleep(1)
+
         while not finished:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     done = True
                 elif event.type == pygame.KEYDOWN:
                     finished = True
-            text.draw(screen)
-
-            pygame.display.flip()
 
     pygame.quit()
 
