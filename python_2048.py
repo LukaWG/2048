@@ -8,7 +8,7 @@ import random
 import logic
 import error
 
-SPEED_FACTOR = 120
+SPEED_FACTOR = 15
 
 assert (120/SPEED_FACTOR).is_integer(), ("SPEED_FACTOR is not a factor of 120")
 
@@ -75,6 +75,7 @@ class Tile(pygame.sprite.Sprite):
                 self.text(2)
         else:
             self.text(num)
+
 
         edit_map(((self.rect.x%100)//20)-1, ((self.rect.y%100)//20)-1, self.num)
 
@@ -150,7 +151,7 @@ class End_Text(pygame.sprite.Sprite):
         if state == "LOSE":
             self.text = ["Game over", "Press any key to exit"]
         elif state == "WIN":
-            self.text = ["You won!", "Press any key to continue"]
+            self.text = ["You won!", "Press any key to exit"]
         self.myfont = pygame.font.Font(pygame.font.get_default_font(), 40)
         self.to_display1 = self.myfont.render(self.text[0], False, (1, 1, 1))
         self.to_display1_rect = self.to_display1.get_rect()
@@ -280,6 +281,7 @@ def run(MAP=MAP):
     tilemap = create_tiles(MAP)
 
     done = False
+    ttfe = False
 
     while not done and len(tiles.sprites()) != 16:
 
@@ -316,6 +318,10 @@ def run(MAP=MAP):
                         find_changes(MOVE_MAP, tilemap, MAP)
 
                         counter = 0
+                    for i in MAP:
+                        for j in i:
+                            if j == 2048:
+                                ttfe = True
                 elif event.key == pygame.K_SPACE:
                     print(f"{MAP[0]}\n{MAP[1]}\n{MAP[2]}\n{MAP[3]}\n")
                 elif event.key == pygame.K_RETURN:
@@ -323,6 +329,8 @@ def run(MAP=MAP):
 
         counter += 1
         if counter == 120//SPEED_FACTOR:
+            if ttfe:
+                done = True
             new_block(MAP)
             tilemap = create_tiles(MAP)
 
@@ -334,6 +342,19 @@ def run(MAP=MAP):
         tiles.draw(screen)
 
         pygame.display.flip()
+
+    if ttfe:
+        finished = False
+        End_Text("WIN")
+        while not finished:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    done = True
+                elif event.type == pygame.KEYDOWN:
+                    finished = True
+            text.draw(screen)
+
+            pygame.display.flip()
 
     if len(tiles.sprites()) == 16:
         finished = False
@@ -347,8 +368,7 @@ def run(MAP=MAP):
             text.draw(screen)
 
             pygame.display.flip()
-            
-            pygame.display.flip()
+
     pygame.quit()
 
 if __name__ == "__main__":
