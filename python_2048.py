@@ -7,6 +7,10 @@ import random
 import logic
 import error
 
+SPEED_FACTOR = 5
+
+assert (120/SPEED_FACTOR).is_integer(), ("SPEED_FACTOR is not a factor of 120")
+
 FPS = 50
 
 SCREENSIZE = [500, 500]
@@ -54,7 +58,7 @@ class Tile(pygame.sprite.Sprite):
         self.myfont = pygame.font.Font(pygame.font.get_default_font(), 40)
 
         self.image = pygame.Surface([100, 100])
-        
+
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
@@ -110,11 +114,11 @@ class Tile(pygame.sprite.Sprite):
         self.image.blit(to_display, pos)
 
     def update(self):
-        if self.counter < 120:
+        if self.counter < 120//SPEED_FACTOR:
             if self.dir == LEFT or self.dir == RIGHT:
-                self.rect.x += self.speed
+                self.rect.x += self.speed*SPEED_FACTOR
             elif self.dir == UP or self.dir == DOWN:
-                self.rect.y += self.speed
+                self.rect.y += self.speed*SPEED_FACTOR
             self.counter += 1
         else:
             self.dir = None
@@ -161,7 +165,7 @@ def find_changes(movemap, tilemap, map):
     movelist = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
     for i in range(len(movemap)):
         for j in range(len(movemap[i])):
-            if movemap[i][j] != (None, None):
+            if movemap[i][j] != (None, None) and movemap[i][j] != ((None, None), (None, None)):
                 if len(str(movemap[i][j][0])) == 1:
                     if movemap[i][j] != (j, i):
                         dir = None
@@ -171,7 +175,7 @@ def find_changes(movemap, tilemap, map):
                             dir = f"{hor} {LEFT}"
                         elif hor > 0:
                             dir = f"{hor} {RIGHT}"
-                        
+
                         ver = i - movemap[i][j][1]
                         if ver < 0:
                             dir = f"{ver} {UP}"
@@ -193,7 +197,7 @@ def find_changes(movemap, tilemap, map):
                                 dir = f"{hor} {LEFT}"
                             elif hor > 0:
                                 dir = f"{hor} {RIGHT}"
-                            
+
                             ver = i - movemap[i][j][k][1]
                             if ver < 0:
                                 dir = f"{ver} {UP}"
@@ -211,7 +215,7 @@ def create_tiles(map):
         i.kill()
 
     tilemap = []
-    
+
     for i in range(len(map)):
         for j in range(len(map[i])):
             tilemap.append([])
@@ -236,6 +240,7 @@ for i in range(0, 500, 120):
     Horizontal(0, i)
 
 new_block(MAP)
+new_block(MAP)
 
 clock = pygame.time.Clock()
 
@@ -243,7 +248,7 @@ def run(MAP=MAP):
 
     counter = 119
 
-    tilemap = []
+    tilemap = create_tiles(MAP)
 
     done = False
 
@@ -257,31 +262,38 @@ def run(MAP=MAP):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     done = True
-                elif event.key == pygame.K_LEFT:
-                    MAP, MOVE_MAP = logic.left(MAP)
+                elif event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN] and counter >= 120//SPEED_FACTOR:
+                    if event.key == pygame.K_LEFT:
+                        MAP, MOVE_MAP = logic.left(MAP)
 
-                    find_changes(MOVE_MAP, tilemap, MAP)
-                                
-                    counter = 0
-                elif event.key == pygame.K_RIGHT:
-                    MAP = logic.right(MAP)
-                                
-                    counter = 119
-                elif event.key == pygame.K_UP:
-                    MAP = logic.up(MAP)
-                                
-                    counter = 119
-                elif event.key == pygame.K_DOWN:
-                    MAP = logic.down(MAP)
-                                
-                    counter = 119
+                        find_changes(MOVE_MAP, tilemap, MAP)
+
+                        counter = 0
+                    elif event.key == pygame.K_RIGHT:
+                        MAP, MOVE_MAP = logic.right(MAP)
+
+                        find_changes(MOVE_MAP, tilemap, MAP)
+
+                        counter = 0
+                    elif event.key == pygame.K_UP:
+                        MAP, MOVE_MAP = logic.up(MAP)
+
+                        find_changes(MOVE_MAP, tilemap, MAP)
+
+                        counter = 0
+                    elif event.key == pygame.K_DOWN:
+                        MAP, MOVE_MAP = logic.down(MAP)
+
+						find_changes(MOVE_MAP, tilemap, MAP)
+
+                        counter = 0
                 elif event.key == pygame.K_SPACE:
                     print(f"{MAP[0]}\n{MAP[1]}\n{MAP[2]}\n{MAP[3]}\n")
                 elif event.key == pygame.K_RETURN:
                     tilemap = create_tiles(MAP)
 
         counter += 1
-        if counter == 120:
+        if counter == 120//SPEED_FACTOR:
             new_block(MAP)
             tilemap = create_tiles(MAP)
 
