@@ -8,7 +8,7 @@ import random
 import logic
 import error
 
-SPEED_FACTOR = 10
+SPEED_FACTOR = 120
 
 assert (120/SPEED_FACTOR).is_integer(), ("SPEED_FACTOR is not a factor of 120")
 
@@ -145,8 +145,25 @@ class Tile(pygame.sprite.Sprite):
                 self.speed -= 1
 
 class End_Text(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, state):
+        super().__init__(text)
+        if state == "LOSE":
+            self.text = "Game over\nPress any key to exit"
+        elif state == "WIN":
+            self.text = "You won!\nPress any key to continue"
+        self.myfont = pygame.font.Font(pygame.font.get_default_font(), 40)
+        self.to_display = self.myfont.render(self.text, True, (255, 255, 255))
+        self.to_display_rect = self.to_display.get_rect()
+        self.size = self.to_display_rect.size
+
+        self.image = pygame.Surface(self.size).convert_alpha()
+        self.image.set_colorkey((0, 0, 0))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = SCREENSIZE[0]//2
+        self.rect.centery = SCREENSIZE[0]//2
+
+        pos = (0, 0)
+        self.image.blit(self.to_display, pos)
         # Create text to say: Game over \n Press any key to continue
 
 def find_empty_square(map):
@@ -240,6 +257,7 @@ screen = pygame.display.set_mode(SCREENSIZE)
 
 board = pygame.sprite.Group()
 tiles = pygame.sprite.Group()
+text = pygame.sprite.Group()
 
 for i in range(0, 500, 120):
     Vertical(i, 0)
@@ -322,10 +340,10 @@ def run(MAP=MAP):
                 elif event.type == pygame.KEYDOWN:
                     finished = True
             text.draw(screen)
-            print("HERE")
-            
+
             pygame.display.flip()
             
+            pygame.display.flip()
     pygame.quit()
 
 if __name__ == "__main__":
