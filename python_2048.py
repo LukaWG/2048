@@ -156,8 +156,11 @@ class End_Text(pygame.sprite.Sprite):
         self.to_display_rect = self.to_display.get_rect()
         self.size = self.to_display_rect.size
 
-        self.image = pygame.Surface(self.size)
+        self.image = pygame.Surface(self.size).convert_alpha()
+        self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
+        self.rect.centerx = SCREENSIZE[0]//2
+        self.rect.centery = SCREENSIZE[0]//2
 
         pos = (0, 0)
         self.image.blit(self.to_display, pos)
