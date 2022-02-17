@@ -1,4 +1,5 @@
 # Sometimes randomly closes
+# Can probably delete all commented code
 
 from time import sleep
 import pygame
@@ -64,7 +65,6 @@ class Tile(pygame.sprite.Sprite):
 
         self.dir = None
         self.counter = 0
-        self.state = "KEEP"
 
         if num == None:
             if len(tiles.sprites()) > 5:
@@ -86,21 +86,21 @@ class Tile(pygame.sprite.Sprite):
         elif self.num == 8:
             self.image.fill((242, 177, 121))
         elif self.num == 16:
-            self.image.fill((245, 149, 99))
+            self.image.fill((245, 149, 99 ))
         elif self.num == 32:
-            self.image.fill((246, 124, 95))
+            self.image.fill((246, 124, 95 ))
         elif self.num == 64:
-            self.image.fill((247, 97, 72))
+            self.image.fill((247, 97 , 72 ))
         elif self.num == 128:
             self.image.fill((239, 207, 114))
         elif self.num == 256:
-            self.image.fill((237, 204, 97))
+            self.image.fill((237, 204, 97 ))
         elif self.num == 512:
-            self.image.fill((237, 200, 80))
+            self.image.fill((237, 200, 80 ))
         elif self.num == 1024:
-            self.image.fill((237, 197, 63))
+            self.image.fill((237, 197, 63 ))
         elif self.num == 2048:
-            self.image.fill((237, 194, 46))
+            self.image.fill((237, 194, 46 ))
         else:
             self.image.fill((60, 58, 50))
         if self.num != 2 and self.num != 4:
@@ -122,26 +122,13 @@ class Tile(pygame.sprite.Sprite):
             self.counter += 1
         else:
             self.dir = None
-            if self.state == "KEEP":
-                # print(f"{int(time.time())} - CHANGING NUMBER")
-                self.text(self.num)
-            elif self.state == "DELETE":
-                self.kill()
-            else:
-                print("UNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\nUNKNOW STATE\n\n")
 
 
-    def move(self, dir, num, state="KEEP"):
+    def move(self, dir, num):
         self.counter = 0
         self.speed, self.dir = dir.split()
         self.speed = int(self.speed)
         self.num = num
-        self.state = state
-        if self.state == "DELETE":
-            if self.dir == RIGHT or self.dir == DOWN:
-                self.speed += 1
-            elif self.dir == LEFT or self.dir == UP:
-                self.speed -= 1
 
 class End_Text(pygame.sprite.Sprite):
     def __init__(self, state):
