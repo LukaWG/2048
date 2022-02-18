@@ -1,5 +1,4 @@
 # Sometimes randomly closes
-# Can probably delete all commented code
 
 from time import sleep
 import pygame
