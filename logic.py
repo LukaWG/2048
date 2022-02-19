@@ -1,15 +1,9 @@
-"""
-New version to try and incorporate the tiles moving to their new position
-DOES NOT WORK
-"""
-
-
 __LEFT = "LEFT"
 __RIGHT = "RIGHT"
 __UP = "UP"
 __DOWN = "DOWN"
 
-def __merge(dir, map, __id_map=None):
+def __merge(dir, map, __id_map):
     '''
     Merges tiles in a given direction
     '''
@@ -79,7 +73,7 @@ def left(map, __merged=False, __id_map=None):
                     __id_map[i][j], __id_map[i][j+1] = __id_map[i][j+1], __id_map[i][j]
                     change = True
     if not __merged:
-        map, __id_map = __merge(__LEFT, map, __id_map=__id_map)
+        map, __id_map = __merge(__LEFT, map, __id_map)
         # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map, __id_map
 
@@ -108,7 +102,7 @@ def right(map, __merged=False, __id_map=None):
                     change = True
     # print(f"FINAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
-        map, __id_map = __merge(__RIGHT, map, __id_map=__id_map)
+        map, __id_map = __merge(__RIGHT, map, __id_map)
         # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map, __id_map
 
@@ -137,7 +131,7 @@ def up(map, __merged=False, __id_map=None):
                     change = True
     # print(f"FINAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
-        map, __id_map = __merge(__UP, map, __id_map=__id_map)
+        map, __id_map = __merge(__UP, map, __id_map)
         # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map, __id_map
 
@@ -166,11 +160,14 @@ def down(map, __merged=False, __id_map=None):
                     change = True
     # print(f"FINAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
-        map, __id_map = __merge(__DOWN, map, __id_map=__id_map)
+        map, __id_map = __merge(__DOWN, map, __id_map)
         # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map, __id_map
 
 def check_merge(map):
+    '''Checks if there are any tiles that can be merged
+    Returns a boolean value
+    '''
     merge = False
     for i in range(len(map)-1):
         for j in range(len(map[i])-1):

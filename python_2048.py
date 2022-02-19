@@ -1,5 +1,3 @@
-# Sometimes randomly closes
-
 from time import sleep
 import pygame
 import random
@@ -11,7 +9,7 @@ SPEED_FACTOR = 15 # 15 recommended
 
 assert (120/SPEED_FACTOR).is_integer(), ("SPEED_FACTOR is not a factor of 120")
 
-FPS = 50 # 50
+FPS = 50 # 50 recommneded
 
 SCREENSIZE = [500, 500]
 
@@ -29,6 +27,9 @@ MAP = (
 
 #region - classes
 class Board(pygame.sprite.Sprite):
+    '''
+    Parent class for the borders of each square
+    '''
     def __init__(self, size, x, y):
         super().__init__()
 
@@ -43,14 +44,23 @@ class Board(pygame.sprite.Sprite):
         board.add(self)
 
 class Vertical(Board):
+    '''
+    Vertical borders
+    '''
     def __init__(self, x, y):
         super().__init__([20, 500], x, y)
 
 class Horizontal(Board):
+    '''
+    Horizontal borders
+    '''
     def __init__(self, x, y):
         super().__init__([500, 20], x, y)
 
 class Tile(pygame.sprite.Sprite):
+    '''
+    Class for the tiles containing the numbers
+    '''
     def __init__(self, pos, num=None):
         super().__init__(tiles) # Adds to the group called tiles
 
@@ -73,10 +83,12 @@ class Tile(pygame.sprite.Sprite):
         else:
             self.text(num)
 
-
-        edit_map(((self.rect.x%100)//20)-1, ((self.rect.y%100)//20)-1, self.num)
+        
+        MAP[((self.rect.y%100)//20)-1][((self.rect.x%100)//20)-1] = self.num
 
     def text(self, num):
+        '''Writes text to the center of the tile
+        '''
         self.num = num
         if self.num == 2:
             self.image.fill((238, 228, 218))
@@ -113,6 +125,8 @@ class Tile(pygame.sprite.Sprite):
         self.image.blit(to_display, pos)
 
     def update(self):
+        '''Updates tile position
+        '''
         if self.counter < 120//SPEED_FACTOR:
             if self.dir == LEFT or self.dir == RIGHT:
                 self.rect.x += self.speed*SPEED_FACTOR
@@ -124,12 +138,18 @@ class Tile(pygame.sprite.Sprite):
 
 
     def move(self, dir, num):
+        '''
+        Sets direction and sped of the tile to be moved
+        '''
         self.counter = 0
         self.speed, self.dir = dir.split()
         self.speed = int(self.speed)
         self.num = num
 
 class End_Text(pygame.sprite.Sprite):
+    '''
+    Class for the text at the end of the game
+    '''
     def __init__(self, state):
         super().__init__(text)
         if state == "LOSE":
@@ -158,6 +178,9 @@ class End_Text(pygame.sprite.Sprite):
 
 #region - functions
 def find_empty_square(map):
+    '''
+    Finds an empty square in the map (for a new tile)
+    '''
     options = []
     for i in range(len(map)):
         for j in range(len(map[i])):
@@ -168,14 +191,16 @@ def find_empty_square(map):
 
 
 def new_block(map):
+    '''
+    Creates a new tile with no number value
+    '''
     square = find_empty_square(map)
     Tile(((square[0]*100)+(20*(square[0]+1)), (square[1]*100)+(20*(square[1]+1))))
 
-def edit_map(x:int, y:int, num:int):
-    MAP[y][x] = num
-
 def find_changes(movemap, tilemap, map):
-
+    '''
+    Finds changes in the map, and updates each tile with there speed and direction
+    '''
     movelist = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
     change = False
     for i in range(len(movemap)):
@@ -229,6 +254,10 @@ def find_changes(movemap, tilemap, map):
     return change
 
 def create_tiles(map):
+    '''
+    Destroys all tiles, and replaces them with tiles based on the map
+    Ensures there are not two tiles on top of each other
+    '''
     for i in tiles:
         i.kill()
 
@@ -265,6 +294,9 @@ new_block(MAP)
 clock = pygame.time.Clock()
 
 def run(MAP=MAP):
+    '''
+    Main function to run the game
+    '''
 
     counter = 119
 
