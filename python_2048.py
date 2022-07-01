@@ -25,6 +25,8 @@ MAP = (
     [0, 0, 0, 0]
     )
 
+PREVENT_CLOSE = True
+
 #region - classes
 class Board(pygame.sprite.Sprite):
     '''
@@ -166,7 +168,7 @@ class End_Text(pygame.sprite.Sprite):
         self.sizey = self.to_display1_rect.size[1] + self.to_display2_rect.size[1]
 
         self.image = pygame.Surface((self.sizex, self.sizey)).convert_alpha()
-        self.image.set_colorkey((0, 0, 0))
+        self.image.fill((0, 0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.centerx = SCREENSIZE[0]//2
         self.rect.centery = SCREENSIZE[0]//2
@@ -311,7 +313,10 @@ def run(MAP=MAP):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                done = True
+                if PREVENT_CLOSE:
+                    pygame.display.iconify()
+                else:
+                    done = True
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     done = True
@@ -343,7 +348,10 @@ def run(MAP=MAP):
                 elif event.key == pygame.K_SPACE:
                     print(f"{MAP[0]}\n{MAP[1]}\n{MAP[2]}\n{MAP[3]}\n")
                 elif event.key == pygame.K_RETURN:
-                    tilemap = create_tiles(MAP)
+                    throwawyvariable = []
+                    for i in MAP:
+                        throwawyvariable.append(i)
+                    logic.check_merge(throwawyvariable)
 
         counter += 1
         if counter == 120//SPEED_FACTOR:

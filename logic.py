@@ -168,9 +168,42 @@ def check_merge(map):
     '''Checks if there are any tiles that can be merged
     Returns a boolean value
     '''
-    merge = False
-    for i in range(len(map)-1):
-        for j in range(len(map[i])-1):
-            if map[i][j] in [map[i][j+1], map[i+1][j]]:
-                merge = True
-    return merge
+    # merge = False
+    # for i in range(len(map)-1):
+    #     for j in range(len(map[i])-1):
+    #         if map[i][j] in [map[i][j+1], map[i+1][j]]:
+    #             merge = True
+    # return merge
+    __id_map = []
+    for i in range(4):
+        __id_map.append([])
+        for j in range(4):
+            if map[i][j] != 0:
+                __id_map[i].append((j, i))
+            else:
+                __id_map[i].append((None, None))
+    lmap, lidmap = __merge(map, __LEFT, __id_map)
+    rmap, ridmap = __merge(map, __RIGHT, __id_map)
+    umap, uidmap = __merge(map, __UP, __id_map)
+    dmap, didmap = __merge(map, __DOWN, __id_map)
+
+    lmap, lidmap = left(map)
+    rmap, ridmap = right(map)
+    umap, uidmap = up(map)
+    dmap, didmap = down(map)
+
+    print(lmap)
+    print()
+    print(map)
+    print()
+    print(lidmap)
+    print()
+    print(__id_map)
+
+    print(lmap == map, rmap == map, umap == map, dmap == map)
+    print(lidmap == __id_map, ridmap == __id_map, uidmap == __id_map, didmap == __id_map)
+
+    if any((lidmap == __id_map, ridmap == __id_map, uidmap == __id_map, didmap == __id_map)):
+        return True
+    else:
+        return False
