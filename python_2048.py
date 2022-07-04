@@ -1,4 +1,5 @@
 from time import sleep
+import menu
 import pygame
 import random
 
@@ -402,5 +403,26 @@ def run(MAP=MAP):
 
     pygame.quit()
 
+
+def start():
+    pygame.init()
+    screen = pygame.display.set_mode((500, 500))
+    
+    menuscreen = menu.Menu(menu.MenuStates.main, 500, 500, bgcolour=(205, 192, 180))
+
+    menuscreen.addtext(menu.MenuStates.main, "2048", 30, 210, 20)
+    menuscreen.addbutton(menu.MenuStates.main, "Start", 22, 200, 100, menu.Bound_Function(run))
+
+    done = False
+    while not done:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                done = True
+
+        menuscreen.render()
+        screen.blit(menuscreen.image, (0,0))
+        
+        pygame.display.update()
+
 if __name__ == "__main__":
-    run()
+    start()
