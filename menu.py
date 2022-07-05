@@ -79,6 +79,7 @@ keys = { # A list of all keys with their codes
 
 class MenuStates(Enum):
     main = 0
+    pause = 1
 
 class MenuComponent:
     def __init__(self, text, fontsize, menu, posx, posy, paddingx=10, paddingy=10, backgroundcol=(255,255,255), foregroundcol=(0,0,0), activebgcol=(200,200,200), activefgcol=(0,0,0), centered=True, shouldrender=True, width=None):
@@ -697,6 +698,29 @@ class Menu:
             self.scrollbar.verselect = False
             self.scrollbar.vscrollimage.fill((100, 100, 100))
 
+    def event_check(self, event):
+        if event.type == MOUSEBUTTONDOWN:
+            self.check_select(pygame.mouse.get_pos())
+            self.scrollselect(event.pos)
+        elif event.type == MOUSEBUTTONUP:
+            self.scrolldeselect()
+        elif event.type == KEYDOWN and (event.key == K_RSHIFT or event.key == K_LSHIFT):
+            self.upper = True
+        elif event.type == KEYUP and (event.key == K_RSHIFT or event.key == K_LSHIFT):
+            self.upper = False
+        elif event.type == KEYDOWN:
+            self.typing(event.key)
+        elif event.type == MOUSEMOTION:
+            self.check_active(pygame.mouse.get_pos())
+            self.check_scroll(event)
+        elif event.type == VIDEORESIZE:
+            if event.size[0] < (self.width // 2) + 10:
+                event.size = (math.ceil(self.width/2) + 10, event.size[1])
+            if event.size[1] < (self.height // 2) + 10:
+                event.size = (event.size[0], math.ceil(self.height/2) + 10)
+            self.resize(event.size)
+            return event.size
+
 class Bound_Function:
     def __init__(self, function, *args):
         self.function = function
@@ -716,13 +740,15 @@ def run():
     menu = Menu(MenuStates.main, 500, 500, bgcolour=(205, 192, 180))
 
     menu.addtext(MenuStates.main, "2048", 30, 210, 20)
-    menu.addbutton(MenuStates.main, "Start", 22, 200, 100, Bound_Function())
+    menu.addbutton(MenuStates.main, "Start", 22, 200, 100, Bound_Function(run))
 
     done = False
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or event.type == KEYDOWN and event.key == K_ESCAPE:
                 done = True
+            else:
+                menu.event_check(event)
 
         screen.fill((205,192,180))
 
