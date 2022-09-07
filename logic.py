@@ -74,7 +74,6 @@ def left(map, __merged=False, __id_map=None):
                     change = True
     if not __merged:
         map, __id_map = __merge(__LEFT, map, __id_map)
-        # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map, __id_map
 
 def right(map, __merged=False, __id_map=None):
@@ -100,10 +99,8 @@ def right(map, __merged=False, __id_map=None):
                     map[i][j], map[i][j+1] = map[i][j+1], map[i][j]
                     __id_map[i][j], __id_map[i][j+1] = __id_map[i][j+1], __id_map[i][j]
                     change = True
-    # print(f"FINAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
         map, __id_map = __merge(__RIGHT, map, __id_map)
-        # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map, __id_map
 
 def up(map, __merged=False, __id_map=None):
@@ -129,10 +126,8 @@ def up(map, __merged=False, __id_map=None):
                     map[i][j], map[i+1][j] = map[i+1][j], map[i][j]
                     __id_map[i][j], __id_map[i+1][j] = __id_map[i+1][j], __id_map[i][j]
                     change = True
-    # print(f"FINAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
         map, __id_map = __merge(__UP, map, __id_map)
-        # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map, __id_map
 
 def down(map, __merged=False, __id_map=None):
@@ -158,22 +153,14 @@ def down(map, __merged=False, __id_map=None):
                     map[i+1][j], map[i][j] = map[i][j], map[i+1][j]
                     __id_map[i][j], __id_map[i+1][j] = __id_map[i+1][j], __id_map[i][j]
                     change = True
-    # print(f"FINAL MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     if not __merged:
         map, __id_map = __merge(__DOWN, map, __id_map)
-        # print(f"MERGED MAP:\n{map[0]}\n{map[1]}\n{map[2]}\n{map[3]}\n")
     return map, __id_map
 
 def check_merge(map):
     '''Checks if there are any tiles that can be merged
     Returns a boolean value
     '''
-    # merge = False
-    # for i in range(len(map)-1):
-    #     for j in range(len(map[i])-1):
-    #         if map[i][j] in [map[i][j+1], map[i+1][j]]:
-    #             merge = True
-    # return merge
     __id_map = []
     for i in range(4):
         __id_map.append([])
@@ -192,18 +179,7 @@ def check_merge(map):
     umap, uidmap = up(map)
     dmap, didmap = down(map)
 
-    print(lmap)
-    print()
-    print(map)
-    print()
-    print(lidmap)
-    print()
-    print(__id_map)
-
-    print(lmap == map, rmap == map, umap == map, dmap == map)
-    print(lidmap == __id_map, ridmap == __id_map, uidmap == __id_map, didmap == __id_map)
-
-    if any((lidmap == __id_map, ridmap == __id_map, uidmap == __id_map, didmap == __id_map)):
+    if not all((lidmap == __id_map, ridmap == __id_map, uidmap == __id_map, didmap == __id_map)):
         return True
     else:
         return False

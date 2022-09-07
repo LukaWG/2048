@@ -2,6 +2,7 @@ from time import sleep
 import menu
 import pygame
 import random
+from copy import deepcopy
 
 import logic
 import error
@@ -142,7 +143,7 @@ class Tile(pygame.sprite.Sprite):
 
     def move(self, dir, num):
         '''
-        Sets direction and sped of the tile to be moved
+        Sets direction and speed of the tile to be moved
         '''
         self.counter = 0
         self.speed, self.dir = dir.split()
@@ -369,23 +370,17 @@ class Game:
                                 for j in i:
                                     if j == 2048:
                                         ttfe = True
-                        elif event.key == pygame.K_SPACE:
-                            print(f"{MAP[0]}\n{MAP[1]}\n{MAP[2]}\n{MAP[3]}\n")
-                        elif event.key == pygame.K_RETURN:
-                            throwawyvariable = []
-                            for i in MAP:
-                                throwawyvariable.append(i)
-                            logic.check_merge(throwawyvariable)
 
                 counter += 1
                 if counter == 120//SPEED_FACTOR:
                     if ttfe:
                         self.done = True
-                    if len(tiles.sprites()) == 16:
-                        if not logic.check_merge(MAP):
-                            self.done = True
                     new_block(MAP)
                     tilemap = create_tiles(MAP)
+                if counter == 120//SPEED_FACTOR + 1:
+                    if len(tiles.sprites()) == 16:
+                        if not logic.check_merge(deepcopy(MAP)):
+                            self.done = True
 
                 tiles.update()
 
@@ -423,6 +418,7 @@ class Game:
                         self.done = True
                     elif event.type == pygame.KEYDOWN:
                         finished = True
+                        self.quit_menu()
 
     def quit(self):
         self.done = True
