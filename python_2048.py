@@ -27,6 +27,13 @@ MAP = (
     [0, 0, 0, 0]
     )
 
+MAP = (
+    [256, 512, 1024, 3],
+    [128, 64, 32, 16],
+    [2, 2, 4, 8],
+    [0, 0, 0, 0]
+)
+
 PREVENT_CLOSE = True
 
 #region - classes
@@ -307,14 +314,19 @@ class Game:
         Main function to run the game
         '''
 
-        counter = 119
+        self.MAP = MAP
 
-        tilemap = create_tiles(MAP)
+        self.counter = 119
+        self.ttfe = False
+        self.game_completed = False
+
+        self.event_loop()
+
+    def event_loop(self):
 
         self.done = False
-        ttfe = False
-
         self.paused = False
+        self.tilemap = create_tiles(self.MAP)
 
         while not self.done:
 
@@ -322,7 +334,10 @@ class Game:
                 self.menuscreen.changestate(menu.MenuStates.pause)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                        self.done = True
+                        if PREVENT_CLOSE:
+                            pygame.display.iconify()
+                        else:
+                            self.done = True
                     else:
                         self.menuscreen.event_check(event)
 
@@ -345,41 +360,43 @@ class Game:
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             self.paused = True
-                        elif event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN] and counter >= 120//SPEED_FACTOR:
+                        elif event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN] and self.counter >= 120//SPEED_FACTOR:
                             if event.key == pygame.K_LEFT:
-                                MAP, MOVE_MAP = logic.left(MAP)
+                                self.MAP, MOVE_MAP = logic.left(self.MAP)
 
-                                if find_changes(MOVE_MAP, tilemap, MAP):
-                                    counter = 0
+                                if find_changes(MOVE_MAP, self.tilemap, self.MAP):
+                                    self.counter = 0
                             elif event.key == pygame.K_RIGHT:
-                                MAP, MOVE_MAP = logic.right(MAP)
+                                self.MAP, MOVE_MAP = logic.right(self.MAP)
 
-                                if find_changes(MOVE_MAP, tilemap, MAP):
-                                    counter = 0
+                                if find_changes(MOVE_MAP, self.tilemap, self.MAP):
+                                    self.counter = 0
                             elif event.key == pygame.K_UP:
-                                MAP, MOVE_MAP = logic.up(MAP)
+                                self.MAP, MOVE_MAP = logic.up(self.MAP)
 
-                                if find_changes(MOVE_MAP, tilemap, MAP):
-                                    counter = 0
+                                if find_changes(MOVE_MAP, self.tilemap, self.MAP):
+                                    self.counter = 0
                             elif event.key == pygame.K_DOWN:
-                                MAP, MOVE_MAP = logic.down(MAP)
+                                self.MAP, MOVE_MAP = logic.down(self.MAP)
 
-                                if find_changes(MOVE_MAP, tilemap, MAP):
-                                    counter = 0
-                            for i in MAP:
+                                if find_changes(MOVE_MAP, self.tilemap, self.MAP):
+                                    self.counter = 0
+                            for i in self.MAP:
                                 for j in i:
                                     if j == 2048:
-                                        ttfe = True
+                                        self.ttfe = False if self.game_completed else True
+                                        self.game_completed = True
+                                        print(self.ttfe)
 
-                counter += 1
-                if counter == 120//SPEED_FACTOR:
-                    if ttfe:
+                self.counter += 1
+                if self.counter == 120//SPEED_FACTOR:
+                    if self.ttfe:
                         self.done = True
-                    new_block(MAP)
-                    tilemap = create_tiles(MAP)
-                if counter == 120//SPEED_FACTOR + 1:
+                    new_block(self.MAP)
+                    self.tilemap = create_tiles(self.MAP)
+                if self.counter == 120//SPEED_FACTOR + 1:
                     if len(tiles.sprites()) == 16:
-                        if not logic.check_merge(deepcopy(MAP)):
+                        if not logic.check_merge(deepcopy(self.MAP)):
                             self.done = True
 
                 tiles.update()
@@ -390,10 +407,12 @@ class Game:
                 tiles.draw(screen)
 
                 pygame.display.flip()
-
-        if ttfe:
+        print("HERE")
+        if self.ttfe:
             finished = False
             End_Text("WIN")
+            self.menuscreen.changestate(menu.MenuStates.win)
+            self.gamefinished = True
             while not finished:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -441,6 +460,10 @@ class Game:
         self.menuscreen.addbutton(menu.MenuStates.pause, "Resume", 22, 215, 100, menu.Bound_Function(self.resume))
         self.menuscreen.addbutton(menu.MenuStates.pause, "Exit", 22, 222, 180, menu.Bound_Function(self.quit))
 
+        self.menuscreen.addtext(menu.MenuStates.win, "2048", 30, 210, 20)
+        self.menuscreen.addbutton(menu.MenuStates.win, "Continue", 22, 215, 100, menu.Bound_Function(self.event_loop))
+        self.menuscreen.addbutton(menu.MenuStates.win, "Exit", 22, 222, 180, menu.Bound_Function(self.quit))
+
         self.donemenu = False
         while not self.donemenu:
             for event in pygame.event.get():
@@ -453,7 +476,15 @@ class Game:
             screen.blit(self.menuscreen.image, (0,0))
             
             pygame.display.update()
+        try:
+            pygame.quit()
+        except:
+            pass
 
 if __name__ == "__main__":
     game = Game()
     game.start()
+    try:
+        pygame.quit()
+    except:
+        pass
