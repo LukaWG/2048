@@ -11,4 +11,8 @@ The only dependency is pygame. Running `install dependencies.py` will install py
 - To prevent the window from closing if the cross is clicked change `PREVENT_CLOSE = False` to `PREVENT_CLOSE = True`
 - If 2048 is reached then the game can continue by pressing a key and then clicking 'Continue' in the menu
 
+## Suggestions and Bugs
+- Please raise any suggestions in Discussions
+- Please raise any bugs in Issues
+
 Written in python 3.8.10 using pygame 2.1.0
